@@ -155,8 +155,8 @@ button,input,select{font:inherit;color:inherit}
 .nc-graph{flex:1;min-height:0;display:flex;align-items:center;justify-content:center;padding:6mm 0 4mm}
 .nc-graph svg{height:100%;max-height:138mm;width:auto;display:block}
 .nc-who{text-align:center}
-.nc-name{display:inline-block;font-family:"Playfair Display",Georgia,serif;font-size:17pt;color:#4A3040;min-width:90mm;padding:0 4mm 2mm;border-bottom:.3mm solid #E3D5D2;outline:none}
-.nc-name:empty::before{content:"Vorname Nachname";color:#C9B9B6}
+.nc-name{display:inline-block;font-family:"Playfair Display",Georgia,serif;font-size:17pt;color:#4A3040;min-width:70mm;padding:0 4mm 2mm;border-bottom:.3mm solid #E3D5D2;outline:none}
+.nc-name:empty::before{content:"Vorname";color:#C9B9B6}
 .nc-birth{font-family:"Lato",sans-serif;font-size:8pt;letter-spacing:.06em;color:#2C1F1A;opacity:.6;margin-top:2.4mm}
 .nc-topics{font-family:"Lato",sans-serif;font-size:8.6pt;letter-spacing:.07em;color:#4A3040;opacity:.75;text-align:center;margin-top:8mm}
 .nc-topics.nc-line{font-family:"Playfair Display",Georgia,serif;font-style:italic;font-size:11pt;letter-spacing:0}
@@ -1088,6 +1088,7 @@ function mkPage(sec,first){
   pg.append(side,main);
   return {pg,body,side};
 }
+const vorname=n=>(n||"").trim().split(/\s+/)[0]||"";
 function coverPage(cv){
   const pg=h("section","page cover");applyTheme(pg,cv.th);
   const b=S.birth;
@@ -1101,7 +1102,7 @@ function coverPage(cv){
     <h1 class="nc-title">${cv.t}</h1>
     <div class="nc-sub">Deine persönliche Analyse</div>
     <div class="nc-graph">${svg}</div>
-    <div class="nc-who"><div class="nc-name" contenteditable="true" spellcheck="false">${esc(S.name)}</div><div class="nc-birth">${birth}</div></div>
+    <div class="nc-who"><div class="nc-name" contenteditable="true" spellcheck="false">${esc(vorname(S.name))}</div><div class="nc-birth">${birth}</div></div>
     ${topics}
     <div class="nc-foot"><span>Kerstin Püringer</span><i>innervision.at</i></div>
   </div>`;
@@ -1214,7 +1215,7 @@ function compute(){
 }
 const dt=document.getElementById("dt"),tm=document.getElementById("tm"),pl=document.getElementById("pl"),nm=document.getElementById("nm");
 pl.addEventListener("input",()=>{const q=pl.value.replace(/\s*\([A-Z]{2}\)\s*$/,"");const r=q.length>1?HumanDesign.searchPlaces(q,8):[];document.getElementById("plist").innerHTML=r.map(x=>`<option value="${esc(x.label)}"></option>`).join("");});
-nm.addEventListener("input",()=>{S.name=nm.value.trim();document.querySelectorAll(".cv-name").forEach(e=>e.textContent=S.name);});
+nm.addEventListener("input",()=>{S.name=nm.value.trim();document.querySelectorAll(".nc-name").forEach(e=>e.textContent=vorname(S.name));});
 function recalc(){S.name=nm.value.trim();if(compute()){const c=S.chart;document.getElementById("msg").textContent=`Berechnet für ${fmtDate(S.birth.date)}, ${S.birth.time} Uhr, ${S.birth.place}.`;render();document.querySelector(".stage").scrollIntoView({block:"start"});}}
 document.getElementById("f").addEventListener("submit",e=>{e.preventDefault();recalc();});
 let rcT;const autoRecalc=()=>{clearTimeout(rcT);rcT=setTimeout(()=>{if(dt.value&&tm.value&&pl.value.trim().length>1)recalc();},700);};
